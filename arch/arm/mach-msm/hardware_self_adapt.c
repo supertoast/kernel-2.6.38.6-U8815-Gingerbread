@@ -151,7 +151,7 @@ char *get_wifi_device_name(void)
   printk("wifi_device_id = %d\n",wifi_device_model);    
   if(WIFI_BROADCOM_4330 == wifi_device_model)                 
   {                                                  
-	wifi_device_id = "1.2";
+	wifi_device_id = "BROADCOM";
   }                                                  
   else if(WIFI_QUALCOMM_6005 == wifi_device_model)            
   { 

@@ -359,6 +359,18 @@ static struct clkctl_acpu_speed pll0_960_pll1_737_pll2_1200_pll4_800[] = {
 	{ 1, 480000, ACPU_PLL_0, 4, 1, 60000, 3, 5, 122880 },
 	{ 1, 600000, ACPU_PLL_2, 2, 1, 75000, 3, 6, 200000 },
 	{ 1, 800000, ACPU_PLL_4, 6, 0, 100000, 3, 7, 200000 },
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
+	{ 1, 825600, ACPU_PLL_2, 2, 0, 103200, 3, 7, 200000 },
+	{ 1, 864000, ACPU_PLL_2, 2, 0, 108000, 3, 7, 200000 },
+	{ 1, 902400, ACPU_PLL_2, 2, 0, 112800, 3, 7, 200000 },
+	{ 1, 940800, ACPU_PLL_2, 2, 0, 117600, 3, 7, 200000 },
+	{ 1, 979200, ACPU_PLL_2, 2, 0, 122400, 3, 7, 200000 },
+	{ 1, 1017600, ACPU_PLL_2, 2, 0, 127200, 3, 7, 200000 },
+	{ 1, 1056000, ACPU_PLL_2, 2, 0, 132000, 3, 7, 200000 },
+	{ 1, 1094400, ACPU_PLL_2, 2, 0, 136800, 3, 7, 200000 },
+	{ 1, 1132800, ACPU_PLL_2, 2, 0, 141600, 3, 7, 200000 },
+    { 1, 1171200, ACPU_PLL_2, 2, 0, 146400, 3, 7, 200000 },
+#endif
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, {0, 0, 0, 0} }
 };
 
@@ -636,6 +648,15 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 		writel_relaxed(reg_clksel, A11S_CLK_SEL_ADDR);
 	}
 
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
+	// Perform overclocking if requested
+	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz>800000) {
+		// Change the speed of PLL2
+		writel_relaxed(hunt_s->a11clk_khz/19200, PLLn_L_VAL(ACPU_PLL_2));
+		udelay(drv_state.acpu_switch_time_us);
+	}
+#endif    
+
 	/* Program clock source and divider */
 	reg_clkctl = readl_relaxed(A11S_CLK_CNTL_ADDR);
 	reg_clkctl &= ~(0xFF << (8 * src_sel));
@@ -646,6 +667,15 @@ static void acpuclk_set_div(const struct clkctl_acpu_speed *hunt_s)
 	/* Program clock source selection */
 	reg_clksel ^= 1;
 	writel_relaxed(reg_clksel, A11S_CLK_SEL_ADDR);
+
+#ifdef CONFIG_MSM_CPU_FREQ_OVERCLOCK
+	// Recover from overclocking
+	if(hunt_s->pll==ACPU_PLL_2 && hunt_s->a11clk_khz<=800000) {
+		// Restore the speed of PLL2
+		writel_relaxed(PLL_1200_MHZ, PLLn_L_VAL(ACPU_PLL_2));
+		udelay(drv_state.acpu_switch_time_us);
+	}
+#endif
 
 	/*
 	 * If the new clock divider is lower than the previous, then
@@ -1005,12 +1035,14 @@ static void __init acpu_freq_tbl_fixup(void)
 
 		if (pll0_needs_fixup && t->pll == ACPU_PLL_0)
 			SLOWER_BY(t->a11clk_src_div, 2);
+#ifndef CONFIG_MSM_CPU_FREQ_OVERCLOCK
 		if (axi_160mhz && drv_state.max_axi_khz >= 160000
 		    && t->ahbclk_khz > 128000)
 			t->axiclk_khz = 160000;
 		if (axi_200mhz && drv_state.max_axi_khz >= 200000
 		    && t->ahbclk_khz > 160000)
-			t->axiclk_khz = 200000;
+            t->axiclk_khz = 200000;
+#endif
 	}
 
 	t--;

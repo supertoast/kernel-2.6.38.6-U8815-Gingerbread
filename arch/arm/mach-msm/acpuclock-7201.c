@@ -366,10 +366,16 @@ static struct clkctl_acpu_speed pll0_960_pll1_737_pll2_1200_pll4_800[] = {
 	{ 1, 940800, ACPU_PLL_2, 2, 0, 117600, 3, 7, 200000 },
 	{ 1, 979200, ACPU_PLL_2, 2, 0, 122400, 3, 7, 200000 },
 	{ 1, 1017600, ACPU_PLL_2, 2, 0, 127200, 3, 7, 200000 },
+	{ 1, 1036800, ACPU_PLL_2, 2, 0, 129600, 3, 7, 200000 },
 	{ 1, 1056000, ACPU_PLL_2, 2, 0, 132000, 3, 7, 200000 },
+	{ 1, 1075200, ACPU_PLL_2, 2, 0, 134400, 3, 7, 200000 },
 	{ 1, 1094400, ACPU_PLL_2, 2, 0, 136800, 3, 7, 200000 },
+	{ 1, 1113600, ACPU_PLL_2, 2, 0, 139200, 3, 7, 200000 },
 	{ 1, 1132800, ACPU_PLL_2, 2, 0, 141600, 3, 7, 200000 },
+	{ 1, 1152000, ACPU_PLL_2, 2, 0, 144000, 3, 7, 200000 },
     { 1, 1171200, ACPU_PLL_2, 2, 0, 146400, 3, 7, 200000 },
+    { 1, 1190400, ACPU_PLL_2, 2, 0, 148800, 3, 7, 200000 },
+    { 1, 1209600, ACPU_PLL_2, 2, 0, 151200, 3, 7, 200000 },
 #endif
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0, 0, 0, 0}, {0, 0, 0, 0} }
 };
@@ -482,7 +488,7 @@ static struct pll_freq_tbl_map acpu_freq_tbl_list[] = {
 };
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[20];
+static struct cpufreq_frequency_table freq_table[25];
 
 static void __init cpufreq_table_init(void)
 {

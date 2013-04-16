@@ -334,6 +334,7 @@ lcd_panel_type get_lcd_panel_type(void)
 			    hw_lcd_panel = MIPI_HX8357C_TIANMA_IPS_HVGA;
 				break;
 			case 2:
+			case 4:
 				hw_lcd_panel = MIPI_HX8357C_CHIMEI_IPS_HVGA;
 				break;
 			case 3:
